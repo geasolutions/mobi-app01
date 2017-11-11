@@ -91,7 +91,7 @@ Drupal.settings.cache.entity = {
 /* Views Caching */
 
 Drupal.settings.cache.views = {
-  enabled: false,
+  enabled: true,
   expiration: 3600
 };
 
