@@ -156,7 +156,7 @@ drupalgap.settings.loader = {
 
 /** Contributed Modules - www/app/modules **/
 Drupal.modules.contrib['geofield'] = {};
-
+Drupal.modules.contrib['logintoboggan'] = {};
 //Drupal.modules.contrib['example'] = {};
 
 /** Custom Modules - www/app/modules/custom **/
