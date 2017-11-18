@@ -113,9 +113,6 @@ function drupalgap_init() {
 function drupalgap_onload() {
   try {
 
-    // Remove any hash in case the app is restarting.
-    window.location.hash = '';
-
     // At this point, the Drupal object has been initialized by jDrupal and the
     // app/settings.js file was loaded in <head>. Let's add DrupalGap's modules
     // onto the Drupal JSON object. Remember, all of the module source code is
@@ -244,19 +241,31 @@ function _drupalgap_deviceready() {
  */
 function _drupalgap_deviceready_options() {
   try {
-    var page_options = arguments[0] ? arguments[0] : {};
+    var pageOptions = arguments[0] ? arguments[0] : {};
     return {
       success: function(result) {
+
+        // Set the connection and invoke hook_device_connected().
         drupalgap.connected = true;
-        // Call all hook_device_connected implementations then go to
-        // the front page.
         module_invoke_all('device_connected');
-        drupalgap_goto('', page_options);
+
+        // If there is a hash url present and it can be routed go directly to that page,
+        // otherwise go to the app's front page.
+        var path = '';
+        var hash = window.location.hash;
+        if (hash.indexOf('#') != -1) {
+          hash = hash.replace('#', '');
+          _drupalgap_goto_prepare_path(hash, true);
+          var routedPath = drupalgap_get_path_from_page_id(hash);
+          if (routedPath) { path = routedPath; }
+        }
+        drupalgap_goto(path, pageOptions);
+
       },
       error: function(jqXHR, textStatus, errorThrown) {
+
         // Build an informative error message and display it.
-        var msg = t('Failed connection to') + ' ' +
-          Drupal.settings.site_path;
+        var msg = t('Failed connection to') + ' ' + Drupal.settings.site_path;
         if (errorThrown != '') { msg += ' - ' + errorThrown; }
         msg += ' - ' + t('Check your device\'s connection and check that') +
           ' ' + Drupal.settings.site_path + ' ' + t('is online.');
@@ -287,7 +296,10 @@ function drupalgap_bootstrap() {
     drupalgap_theme_registry_build();
 
     // Attach device back button handler (Android).
-    document.addEventListener('backbutton', drupalgap_back, false);
+    document.addEventListener('backbutton', function(e) {
+      drupalgap_back();
+      e.preventDefault();
+    }, false);
   }
   catch (error) { console.log('drupalgap_bootstrap - ' + error); }
 }
@@ -340,6 +352,10 @@ function drupalgap_load_modules() {
               Drupal.modules[bundle][module_name].name = module_name;
               module = Drupal.modules[bundle][module_name];
             }
+
+          // If the module is already loaded via the index.html file, just continue.
+          if (typeof module.loaded !== 'undefined' && module.loaded) { continue; }
+
             // Determine module directory.
             var dir = drupalgap_modules_get_bundle_directory(bundle);
             module_base_path = dir + '/' + module.name;
@@ -368,17 +384,15 @@ function drupalgap_load_modules() {
                     url: modules_paths_object,
                     data: null,
                     success: function() {
-                      if (Drupal.settings.debug) { dpm(modules_paths_object); }
+                      if (Drupal.settings.debug) { console.log(modules_paths_object); }
                     },
                     dataType: 'script',
                     error: function(xhr, textStatus, errorThrown) {
-                      var msg = t('Failed to load module!') +
-                        ' (' + module.name + ')';
-                      dpm(msg);
-                      console.log(modules_paths_object);
-                      dpm(textStatus);
-                      dpm(errorThrown.message);
-                      drupalgap_alert(msg);
+                      console.log(
+                          t('Failed to load module!') + ' (' + module.name + ')',
+                          textStatus,
+                          errorThrown.message
+                      );
                     }
                 });
             }
@@ -419,7 +433,7 @@ function drupalgap_load_theme() {
       drupalgap_add_js(theme_path);
       // Call the theme's template_info implementation.
       var template_info_function = theme_name + '_info';
-      if (drupalgap_function_exists(template_info_function)) {
+      if (function_exists(template_info_function)) {
         var fn = window[template_info_function];
         drupalgap.theme = fn();
         // For each region in the name, set the 'name' value on the region JSON.
@@ -743,6 +757,8 @@ function drupalgap_format_plural(count, singular, plural) {
  */
 function drupalgap_function_exists(name) {
   try {
+    console.log('WARNING - drupalgap_function_exists() is deprecated. ' +
+      'Use function_exists() instead!');
     return function_exists(name);
   }
   catch (error) { console.log('drupalgap_function_exists - ' + error); }
@@ -944,7 +960,7 @@ function drupalgap_jqm_page_event_fire(event, callback, page_arguments) {
       if (arguments[3]) { key += '-' + arguments[3]; }
     }
     if ($.inArray(key, drupalgap.page.jqm_events) == -1 &&
-      drupalgap_function_exists(callback)) {
+      function_exists(callback)) {
       drupalgap.page.jqm_events.push(key);
       var fn = window[callback];
       if (page_arguments) {
@@ -994,19 +1010,20 @@ function drupalgap_jqm_page_events() {
  */
 function drupalgap_jqm_page_event_script_code(options) {
   try {
+    if (!options.page_id) { options.page_id = drupalgap_get_page_id(); }
+    if (!options.jqm_page_event) { options.jqm_page_event = 'pageshow'; }
     // Build the arguments to send to the event fire handler.
     var event_fire_args = '"' + options.jqm_page_event + '", "' +
       options.jqm_page_event_callback + '", ' +
       options.jqm_page_event_args;
     if (arguments[1]) { event_fire_args += ', "' + arguments[1] + '"'; }
     // Build the inline JS and return it.
-    var script_code = '<script type="text/javascript">' +
+    return '<script type="text/javascript">' +
       '$("#' + options.page_id + '").on("' +
         options.jqm_page_event + '", drupalgap_jqm_page_event_fire(' +
-          event_fire_args +
-        '));' +
+        event_fire_args +
+      '));' +
     '</script>';
-    return script_code;
   }
   catch (error) {
     console.log('drupalgap_jqm_page_event_script_code - ' + error);
@@ -1032,29 +1049,30 @@ function drupalgap_max_width() {
  * account object as the second argument to check access on a specific user.
  * Also, you may optionally pass in an entity object as the third argument, if
  * that entity needs to be passed along to an 'access_callback' handler.
- * @param {String} path
+ * @param {String} routerPath The router path of the destination.
+ * @param {String} path The destination path.
  * @return {Boolean}
  */
-function drupalgap_menu_access(path) {
+function drupalgap_menu_access(routerPath, path) {
   try {
 
     // User #1 is allowed to do anything, I mean anything.
     if (Drupal.user.uid == 1) { return true; }
     // Everybody else will not have access unless we prove otherwise.
     var access = false;
-    if (drupalgap.menu_links[path]) {
+    if (drupalgap.menu_links[routerPath]) {
       // Check to see if there is an access callback specified with the menu
       // link.
-      if (typeof drupalgap.menu_links[path].access_callback === 'undefined') {
+      if (typeof drupalgap.menu_links[routerPath].access_callback === 'undefined') {
         // No access call back specified, if there are any access arguments
         // on the menu link, then it is assumed they are user permission machine
         // names, so check that user account's role(s) for that permission to
         // grant access.
-        if (drupalgap.menu_links[path].access_arguments) {
-          if ($.isArray(drupalgap.menu_links[path].access_arguments)) {
-            for (var index in drupalgap.menu_links[path].access_arguments) {
-              if (!drupalgap.menu_links[path].access_arguments.hasOwnProperty(index)) { continue; }
-              var permission = drupalgap.menu_links[path].access_arguments[index];
+        if (drupalgap.menu_links[routerPath].access_arguments) {
+          if ($.isArray(drupalgap.menu_links[routerPath].access_arguments)) {
+            for (var index in drupalgap.menu_links[routerPath].access_arguments) {
+              if (!drupalgap.menu_links[routerPath].access_arguments.hasOwnProperty(index)) { continue; }
+              var permission = drupalgap.menu_links[routerPath].access_arguments[index];
               access = user_access(permission);
               if (access) { break; }
             }
@@ -1068,16 +1086,16 @@ function drupalgap_menu_access(path) {
       }
       else {
 
-        // An access callback function is specified for this path...
-        var function_name = drupalgap.menu_links[path].access_callback;
-        if (drupalgap_function_exists(function_name)) {
+        // An access callback function is specified for this routerPath...
+        var function_name = drupalgap.menu_links[routerPath].access_callback;
+        if (function_exists(function_name)) {
           // Grab the access callback function. If there are any access args
           // send them along, or just call the function directly.
           // access arguments.
           var fn = window[function_name];
-          if (drupalgap.menu_links[path].access_arguments) {
+          if (drupalgap.menu_links[routerPath].access_arguments) {
             var access_arguments =
-              drupalgap.menu_links[path].access_arguments.slice(0);
+              drupalgap.menu_links[routerPath].access_arguments.slice(0);
             // If we have an entity loaded, replace the first integer we find
             // in the page arguments with the loaded entity.
             if (arguments[2]) {
@@ -1089,6 +1107,12 @@ function drupalgap_menu_access(path) {
                     access_arguments[index] = entity;
                     break;
                   }
+              }
+            }
+            else {
+              // Replace any integer arguments with the corresponding path argument.
+              for (var i = 0; i < access_arguments.length; i++) {
+                if (is_int(access_arguments[i])) { access_arguments[i] = arg(i, path); }
               }
             }
             return fn.apply(null, Array.prototype.slice.call(access_arguments));
@@ -1103,7 +1127,7 @@ function drupalgap_menu_access(path) {
       }
     }
     else {
-      console.log('drupalgap_menu_access - path (' + path + ') does not exist');
+      console.log('drupalgap_menu_access - routerPath (' + routerPath + ') does not exist');
     }
     return access;
   }
@@ -1249,15 +1273,29 @@ function drupalgap_set_title(title) {
 }
 
 /**
+ * Returns true if the loader spinner is enabled, false otherwise. Defaults to true if no config for it is present.
+ * @returns {Boolean}
+ */
+function drupalgap_loader_enabled() {
+  if (!drupalgap.settings.loader) { drupalgap.settings.loader = {}; }
+  return typeof drupalgap.settings.loader.enabled !== 'undefined' ?
+      drupalgap.settings.loader.enabled : true;
+}
+
+/**
+ * Toggle on or off the loader spinner, send true to turn it on, false to turn it off.
+ * @param {Boolean} enable
+ */
+function drupalgap_loader_enable(enable) {
+  drupalgap.settings.loader.enabled = enable;
+}
+
+/**
  * Implements hook_services_preprocess().
  * @param {Object} options
  */
 function drupalgap_services_preprocess(options) {
-  try {
-    // Show the loading icon.
-    drupalgap_loading_message_show();
-  }
-  catch (error) { console.log('drupalgap_services_preprocess - ' + error); }
+  if (drupalgap_loader_enabled()) { drupalgap_loading_message_show(); }
 }
 
 /**
@@ -1266,11 +1304,7 @@ function drupalgap_services_preprocess(options) {
  * @param {Object} result
  */
 function drupalgap_services_postprocess(options, result) {
-  try {
-    // Hide the loading icon.
-    drupalgap_loading_message_hide();
-  }
-  catch (error) { console.log('drupalgap_services_postprocess - ' + error); }
+  if (drupalgap_loader_enabled()) { drupalgap_loading_message_hide(); }
 }
 
 /**

@@ -173,7 +173,7 @@ function drupalgap_entity_render_content(entity_type, entity) {
         // Save the field display and weight. Use the weight from the field's render element if it's available,
         // otherwise fallback to the weight mentioned in the display.
         field_displays[field_name] = display;
-        field_weights[field_name] = typeof entity[field_name].weight !== 'undefined' ?
+        field_weights[field_name] = entity[field_name] && typeof entity[field_name].weight !== 'undefined' ?
             entity[field_name].weight : display.weight;
     }
 
@@ -223,6 +223,7 @@ function drupalgap_entity_render_content(entity_type, entity) {
 
     // Update this entity in local storage so the content property sticks.
     if (entity_caching_enabled(entity_type, bundle)) {
+      _entity_set_expiration_time(entity_type, entity);
       _entity_local_storage_save(
         entity_type,
         entity[entity_primary_key(entity_type)],
@@ -266,7 +267,7 @@ function drupalgap_entity_render_field(entity_type, entity, field_name,
       else { module = field.widget.module; }
     }
     var function_name = module + '_field_formatter_view';
-    if (drupalgap_function_exists(function_name)) {
+    if (function_exists(function_name)) {
       // Grab the field formatter function, then grab the field items
       // from the entity, then call the formatter function and append its result
       // to the entity's content.

@@ -204,7 +204,7 @@ function views_exposed_form(form, form_state, options) {
           var field = drupalgap_field_info_field(field_name);
           var module = field.module;
           var handler = module + '_views_exposed_filter';
-          if (!drupalgap_function_exists(handler)) {
+          if (!function_exists(handler)) {
             dpm(
               'WARNING: views_exposed_form() - ' + handler + '() must be ' +
               'created to assemble the ' + field.type + ' filter used by ' +
@@ -237,6 +237,20 @@ function views_exposed_form(form, form_state, options) {
             if (filter.options.vocabulary != '') {
               autocomplete.vid = taxonomy_vocabulary_get_vid_from_name(filter.options.vocabulary);
             }
+            $.extend(element, autocomplete, true);
+          }
+          // User ID exposed filter.
+          else if (filter.definition.handler == 'views_handler_filter_user_name') {
+            element.type = 'autocomplete';
+            var autocomplete = {
+              remote: true,
+              custom: true,
+              handler: 'index',
+              entity_type: 'user',
+              value: 'name',
+              label: 'name',
+              filter: 'name'
+            };
             $.extend(element, autocomplete, true);
           }
           else if (element.type == 'select') {
@@ -372,14 +386,9 @@ function views_exposed_form_reset() {
  */
 function theme_view(variables) {
   try {
-    // Throw a warning if no id is provided.
-    if (!variables.attributes.id) {
-      console.log(
-        'WARNING: theme_view() - No id specified on attributes! ' +
-        'A random id will be generated instead.'
-      );
-      variables.attributes.id = 'views-view--' + user_password();
-    }
+    // Create a random id attribute if one wasn't provided.
+    if (!variables.attributes.id) { variables.attributes.id = 'views-view--' + user_password(); }
+
     // Since multiple pages can stack up in the DOM, warn the developer if they
     // re-use a Views ID that is already in the DOM. If the ID hasn't been used
     // yet, add it to the drupalgap.views.ids array.
@@ -572,12 +581,9 @@ function theme_views_view(variables) {
       setTimeout(function() {
           $(selector).trigger('create').show('fast');
       }, 100);
-      if (
-        variables.empty_callback &&
-        function_exists(variables.empty_callback)
-      ) {
+      if (variables.empty_callback && function_exists(variables.empty_callback)) {
         var empty_callback = window[variables.empty_callback];
-        return views_exposed_form_html + drupalgap_render(empty_callback(results.view));
+        return views_exposed_form_html + drupalgap_render(empty_callback(results.view, variables));
       }
       return html + views_exposed_form_html;
     }
@@ -831,6 +837,23 @@ function drupalgap_views_get_result_formats(variables) {
     format_attributes['class'] += ' views-results ';
 
     switch (variables.format) {
+      case 'grid':
+
+          // Determine columns and jqm grid type.
+          var columns = jqm_grid_verify_columns(variables);
+          var grid = jqm_grid_get_type(columns);
+
+          // Prep the container class name.
+          if (!format_attributes.class) { format_attributes.class = ''; }
+          format_attributes.class += ' ui-grid-' + grid + ' ';
+
+          // Build the strings.
+          open = '<div ' + drupalgap_attributes(format_attributes) + '>';
+          close = '</div>';
+          open_row = '<div class="ui-block">'; // This class will be replaced dynamically.
+          close_row = '</div>';
+        break;
+
       case 'ul':
         if (typeof format_attributes['data-role'] === 'undefined') {
           format_attributes['data-role'] = 'listview';
@@ -840,6 +863,7 @@ function drupalgap_views_get_result_formats(variables) {
         open_row = '<li>';
         close_row = '</li>';
         break;
+
       case 'ol':
         if (typeof format_attributes['data-role'] === 'undefined') {
           format_attributes['data-role'] = 'listview';
@@ -849,6 +873,7 @@ function drupalgap_views_get_result_formats(variables) {
         open_row = '<li>';
         close_row = '</li>';
         break;
+
       case 'table':
       case 'jqm_table':
         if (variables.format == 'jqm_table') {
@@ -867,6 +892,7 @@ function drupalgap_views_get_result_formats(variables) {
         open_row = '<tr>';
         close_row = '</tr>';
         break;
+
       case 'unformatted_list':
       default:
         if (typeof format_attributes['class'] === 'undefined') {
@@ -901,22 +927,33 @@ function drupalgap_views_get_result_formats(variables) {
 function drupalgap_views_render_rows(variables, results, root, child, open_row, close_row) {
   try {
     var html = '';
+    var totalRows = results[root].length;
     for (var count in results[root]) {
       if (!results[root].hasOwnProperty(count)) { continue; }
+
+      // Extract the row and mark its position.
       var object = results[root][count];
-      // Extract the row.
       var row = object[child];
-      // Mark the row position.
-      row._position = count;
+      row._position = parseInt(count);
+
       // If a row_callback function exists, call it to render the row,
       // otherwise use the default row render mechanism.
       var row_content = '';
       if (variables.row_callback && function_exists(variables.row_callback)) {
         row_callback = window[variables.row_callback];
-        row_content = row_callback(results.view, row);
+        row_content = row_callback(results.view, row, variables);
       }
       else { row_content = JSON.stringify(row); }
-      html += open_row + row_content + close_row;
+
+      // If we're rendering a grid, replace the class name for the current column. Otherwise
+      // just render the row as usual.
+      if (variables.format == 'grid') {
+        var className = jqm_grid_get_item_class(row._position, variables.columns);
+        var openRow = jqm_grid_set_item_row_class(open_row, className);
+        html += openRow + row_content + close_row;
+      }
+      else { html += open_row + row_content + close_row; }
+
     }
     return html;
   }
