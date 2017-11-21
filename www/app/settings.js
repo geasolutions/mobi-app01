@@ -6,7 +6,7 @@
 //window.localStorage.clear();
 
 // Set to true to see console.log() messages. Set to false when publishing app.
-Drupal.settings.debug = false;
+Drupal.settings.debug = false	;
 
 /****************************************|
  * Drupal Settings (provided by jDrupal) |
@@ -15,7 +15,7 @@ Drupal.settings.debug = false;
 /* DRUPAL PATHS */
  
 // Site Path (do not use a trailing slash)
-Drupal.settings.site_path = 'https://dev-in-your-zone.pantheonsite.io'; // e.g. http://www.example.com
+Drupal.settings.site_path = 'http://innova-cuerna.byethost12.com'; // e.g. http://www.example.com
 
 // Default Services Endpoint Path
 Drupal.settings.endpoint = 'drupalgap';
@@ -91,7 +91,7 @@ Drupal.settings.cache.entity = {
 /* Views Caching */
 
 Drupal.settings.cache.views = {
-  enabled: true,
+  enabled: false,
   expiration: 3600
 };
 
@@ -133,6 +133,7 @@ drupalgap.settings.exit_message = 'Exit ' + drupalgap.settings.title + '?';
 
 // Loader Animations - http://demos.jquerymobile.com/1.4.0/loader/
 drupalgap.settings.loader = {
+  enabled: true,
   loading: {
     text: 'Loading...',
     textVisible: true,
@@ -156,11 +157,13 @@ drupalgap.settings.loader = {
 
 /** Contributed Modules - www/app/modules **/
 Drupal.modules.contrib['geofield'] = {};
+Drupal.modules.contrib['logintoboggan'] = {};
+
 //Drupal.modules.contrib['example'] = {};
 
 /** Custom Modules - www/app/modules/custom **/
 
-//Drupal.modules.custom['my_module'] = {};
+Drupal.modules.custom['my_module'] = {};
 
 /***************************************|
  * Menus - http://drupalgap.org/node/85 |
