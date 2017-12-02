@@ -6,7 +6,7 @@
 //window.localStorage.clear();
 
 // Set to true to see console.log() messages. Set to false when publishing app.
-Drupal.settings.debug = false	;
+Drupal.settings.debug = true;
 
 /****************************************|
  * Drupal Settings (provided by jDrupal) |
@@ -91,7 +91,7 @@ Drupal.settings.cache.entity = {
 /* Views Caching */
 
 Drupal.settings.cache.views = {
-  enabled: false,
+  enabled: true,
   expiration: 3600
 };
 
@@ -117,7 +117,7 @@ drupalgap.settings.locale = {
 drupalgap.settings.title = 'DrupalGap';
  
 // App Front Page
-drupalgap.settings.front = 'dashboard';
+drupalgap.settings.front = 'map';
 
 // Theme
 drupalgap.settings.theme = 'easystreet3';
@@ -133,7 +133,6 @@ drupalgap.settings.exit_message = 'Exit ' + drupalgap.settings.title + '?';
 
 // Loader Animations - http://demos.jquerymobile.com/1.4.0/loader/
 drupalgap.settings.loader = {
-  enabled: true,
   loading: {
     text: 'Loading...',
     textVisible: true,
@@ -157,14 +156,13 @@ drupalgap.settings.loader = {
 
 /** Contributed Modules - www/app/modules **/
 Drupal.modules.contrib['geofield'] = {};
-//Drupal.modules.contrib['logintoboggan'] = {};
-
+Drupal.modules.contrib['addressfield'] = {};
 //Drupal.modules.contrib['example'] = {};
 
 /** Custom Modules - www/app/modules/custom **/
 
-//Drupal.modules.custom['my_module'] = {};
-
+Drupal.modules.custom['my_module'] = {};
+Drupal.modules.custom['my_firstmap'] = {};
 /***************************************|
  * Menus - http://drupalgap.org/node/85 |
  ***************************************/

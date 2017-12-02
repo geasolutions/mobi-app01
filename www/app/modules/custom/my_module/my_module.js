@@ -19,7 +19,7 @@ function my_module_hello_world_page() {
     theme: 'button',
     text: 'Hello World',
     attributes: {
-      onclick: "drupalgap_alert('Hi!')"
+      onclick: "drupalgap_alert('Esta es una prueba de que todo funciona bien cuando está en el lugar apropiado en el momento apropiado!')"
     }
   };
   return content;

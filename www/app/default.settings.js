@@ -133,7 +133,6 @@ drupalgap.settings.exit_message = 'Exit ' + drupalgap.settings.title + '?';
 
 // Loader Animations - http://demos.jquerymobile.com/1.4.0/loader/
 drupalgap.settings.loader = {
-  enabled: true,
   loading: {
     text: 'Loading...',
     textVisible: true,
