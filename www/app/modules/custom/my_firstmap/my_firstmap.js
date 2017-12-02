@@ -168,7 +168,8 @@ function _my_firstsmap_map_button_click() {
               
               // Render a nearby location, and add it to the item list.
               var row = object.node;
-              var image_html = theme('image', { path: row.field_image.src });
+              var link = l(description, 'node/' + row.nid);
+			  //var image_html = theme('image', { path: row.field_image.src });
               var distance =
                 row.field_geofield_distance + ' ' +
                 drupalgap_format_plural(row.field_geofield_distance, 'mile', 'miles');
