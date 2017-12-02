@@ -146,7 +146,7 @@ function my_firstmap_map_pageshow() {
 /**
  * The "Find Nearby Locations" click handler.
  */
-function _my_firtsmap_map_button_click() {
+function _my_firstsmap_map_button_click() {
   try {
     // Build the path to the view to retrieve the results.
     var range = 4; // Search within a 4 mile radius, for illustration purposes.
