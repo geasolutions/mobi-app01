@@ -29,19 +29,18 @@ function my_firstmap_map() {
     var map_attributes = {
       id: 'my_firstmap_map',
       style: 'width: 100%; height: 320px;'
-    };
+    };   
+    content['find_nearby_locations'] = {
+        theme: 'button',
+        text: 'Find Nearby Locations',
+        attributes: {
+        onclick: "_my_firstmap_map_button_click()",
+        'data-theme': 'b'
+       }
+      };
     content['map'] = {
       markup: '<div ' + drupalgap_attributes(map_attributes) + '></div>'
-    };
-   
-    content['find_nearby_locations'] = {
-      theme: 'button',
-      text: 'Find Nearby Locations',
-      attributes: {
-      onclick: "_my_firstmap_map_button_click()",
-      'data-theme': 'b'
-     }
-    };
+    };           
     content['location_results'] = {
       theme: 'jqm_item_list',
       items: [],
@@ -77,7 +76,7 @@ function my_firstmap_map_pageshow() {
         // Set the map's options.
         var mapOptions = {
           center: myLatlng,
-          zoom: 11,
+          zoom: 14,
           mapTypeControl: true,
           mapTypeControlOptions: {
             style: google.maps.MapTypeControlStyle.DROPDOWN_MENU
@@ -87,7 +86,6 @@ function my_firstmap_map_pageshow() {
             style: google.maps.ZoomControlStyle.SMALL
           }
         };
-        
         // Initialize the map, and set a timeout to resize properly.
         _my_firstmap_map = new google.maps.Map(
           document.getElementById("my_firstmap_map"),
@@ -155,9 +153,8 @@ function _my_firstsmap_map_button_click() {
       
     // Call the server.
     views_datasource_get_view_result(path, {
-        success: function(data) {
-          
-          if (data.nodes.length == 0) {
+        success: function(data) {	  
+	      if (data.nodes.length == 0) {
             drupalgap_alert('Lo sentimos, No encontramos ninguna ubicación cercana!');
             return;
           }
