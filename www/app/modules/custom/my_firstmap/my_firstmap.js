@@ -26,15 +26,14 @@ function my_firstmap_menu() {
 function my_firstmap_map() {
   try {
     var content = {};
-    
-	
-	
-	
-	var map_attributes = {
+    var map_attributes = {
       id: 'my_firstmap_map',
       style: 'width: 100%; height: 320px;'
     };   
-    content['find_nearby_locations'] = {
+    content['map'] = {
+      markup: '<div ' + drupalgap_attributes(map_attributes) + '></div>'
+    };           
+	content['find_nearby_locations'] = {
         theme: 'button',
         text: 'Find Nearby Locations',
         attributes: {
@@ -42,10 +41,7 @@ function my_firstmap_map() {
         'data-theme': 'b'
        }
       };
-    content['map'] = {
-      markup: '<div ' + drupalgap_attributes(map_attributes) + '></div>'
-    };           
-    content['location_results'] = {
+	content['location_results'] = {
       theme: 'jqm_item_list',
       items: [],
       attributes: {
@@ -148,10 +144,10 @@ function my_firstmap_map_pageshow() {
 /**
  * The "Find Nearby Locations" click handler.
  */
-function _my_firstsmap_map_button_click() {
+function _my_firstmap_map_button_click() {
   try {
     // Build the path to the view to retrieve the results.
-    var range = 4; // Search within a 4 mile radius, for illustration purposes.
+    var range = 10; // Search within a 4 mile radius, for illustration purposes.
     var path = 'nearby-locations.json/' +
       _my_firstmap_user_latitude + ',' + _my_firstsmap_user_longitude + '_' + range;
       
