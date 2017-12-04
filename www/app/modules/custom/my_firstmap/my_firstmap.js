@@ -154,11 +154,10 @@ function _my_firstmap_map_button_click() {
     // Call the server.
     views_datasource_get_view_result(path, {
         success: function(data) {
-		    var pathmsg = 'la ruta en mi móvil es: ' + path;
-             drupalgap_alert(pathmsg);
-            return;
-			
+		    
 	      if (data.nodes.length == 0) {
+            var pathmsg = 'la ruta en mi móvil es: ' + path;
+             drupalgap_alert(pathmsg);
             drupalgap_alert('Lo sentimos, No encontramos ninguna ubicación cercana!');
             return;
           }
