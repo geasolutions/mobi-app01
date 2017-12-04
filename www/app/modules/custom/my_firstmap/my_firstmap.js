@@ -26,7 +26,11 @@ function my_firstmap_menu() {
 function my_firstmap_map() {
   try {
     var content = {};
-    var map_attributes = {
+    
+	
+	
+	
+	var map_attributes = {
       id: 'my_firstmap_map',
       style: 'width: 100%; height: 320px;'
     };   
@@ -165,15 +169,14 @@ function _my_firstsmap_map_button_click() {
               
               // Render a nearby location, and add it to the item list.
               var row = object.node;
-              var link = l(description, 'node/' + row.nid);
-			  //var image_html = theme('image', { path: row.field_image.src });
+              //var image_html = theme('image', { path: row.field_image.src });
               var distance =
                 row.field_geofield_distance + ' ' +
                 drupalgap_format_plural(row.field_geofield_distance, 'mile', 'miles');
               var description =
                 '<h2>' + distance + '</h2>' +
                 '<p>' + row.title + '</p>';
-              var link = l(image_html + description, 'node/' + row.nid);
+              var link = l(description, 'node/' + row.nid);
               items.push(link);
               
               // Add a marker on the map for the location.
