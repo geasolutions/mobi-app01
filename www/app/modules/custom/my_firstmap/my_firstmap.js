@@ -147,13 +147,17 @@ function my_firstmap_map_pageshow() {
 function _my_firstmap_map_button_click() {
   try {
     // Build the path to the view to retrieve the results.
-    var range = 10; // Search within a 4 mile radius, for illustration purposes.
+    var range = 4 // Search within a 4 mile radius, for illustration purposes.
     var path = 'nearby-locations.json/' +'@'+
       _my_firstmap_user_latitude + ',' + _my_firstmap_user_longitude + '/_' + range;
       
     // Call the server.
     views_datasource_get_view_result(path, {
-        success: function(data) {	  
+        success: function(data) {
+		    var pathmsg = 'la ruta en mi móvil es: ' + path;
+             drupalgap_alert(pathmsg);
+            return;
+			
 	      if (data.nodes.length == 0) {
             drupalgap_alert('Lo sentimos, No encontramos ninguna ubicación cercana!');
             return;
