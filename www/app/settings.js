@@ -162,7 +162,7 @@ Drupal.modules.contrib['addressfield'] = {};
 /** Custom Modules - www/app/modules/custom **/
 
 Drupal.modules.custom['my_module'] = {};
-Drupal.modules.custom['my_firstmap'] = {};
+//Drupal.modules.custom['my_firstmap'] = {};
 /***************************************|
  * Menus - http://drupalgap.org/node/85 |
  ***************************************/
