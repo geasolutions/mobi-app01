@@ -148,8 +148,8 @@ function _my_firstmap_map_button_click() {
   try {
     // Build the path to the view to retrieve the results.
     var range = 4 // Search within a 4 mile radius, for illustration purposes.
-    var path = 'nearby-locations.json/' +
-      _my_firstmap_user_latitude + ',' + _my_firstmap_user_longitude + '_' + range;
+    var path = 'nearby-locations.json/' +'@'+
+      _my_firstmap_user_latitude + ',' + _my_firstmap_user_longitude + '_' + range +',17.25z?hl=en';
       
     // Call the server.
     views_datasource_get_view_result(path, {
