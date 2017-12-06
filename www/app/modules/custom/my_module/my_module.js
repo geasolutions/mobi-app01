@@ -7,7 +7,7 @@
   try {
     var items = {};
     items['map'] = {
-      title: 'Lugares de Interés',
+      title: 'Mi ubicación',
       page_callback: 'my_module_map',
       pageshow: 'my_module_map_pageshow'
     };
@@ -27,7 +27,7 @@
     };
    content['map_location'] = {
     theme: 'button',
-   text: 'Localidades de interés',
+   text: 'Lugares de interés',
    attributes: {
     onclick: "_my_module_map_button_click()",
     'data-theme': 'b'
@@ -128,7 +128,7 @@ function _my_module_map_button_click() {
   try {
 
     var range = 4; // Search within a 4 mile radius, for illustration purposes.
-    var path = 'nearby-location.json/' + _my_module_user_latitude + ',' + _my_module_user_longitude + '_' + range;
+    var path = 'nearby-locations.json/' + _my_module_user_latitude + ',' + _my_module_user_longitude + '_' + range;
     // Call the server.
     views_datasource_get_view_result(path, {
         success: function(data) {
