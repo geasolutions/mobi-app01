@@ -7,7 +7,7 @@
   try {
     var items = {};
     items['map'] = {
-      title: 'Mapa de Localidades',
+      title: 'Lugares de Interés',
       page_callback: 'my_module_map',
       pageshow: 'my_module_map_pageshow'
     };
@@ -20,14 +20,14 @@
     var content = {};
     var map_attributes = {
       id: 'my_module_map',
-      style: 'width: 100%; height: 400px;'
+      style: 'width: 100%; height: 350px;'
     };
     content['map'] = {
       markup: '<div ' + drupalgap_attributes(map_attributes) + '></div>'
     };
    content['map_location'] = {
     theme: 'button',
-   text: 'Localidades de interés en el área',
+   text: 'Localidades de interés',
    attributes: {
     onclick: "_my_module_map_button_click()",
     'data-theme': 'b'
@@ -127,13 +127,13 @@
 function _my_module_map_button_click() {
   try {
 
-    var range = 20; // Search within a 4 mile radius, for illustration purposes.
+    var range = 4; // Search within a 4 mile radius, for illustration purposes.
     var path = 'nearby-location.json/' + _my_module_user_latitude + ',' + _my_module_user_longitude + '_' + range;
     // Call the server.
     views_datasource_get_view_result(path, {
         success: function(data) {
           if (data.nodes.length === 0) {
-            drupalgap_alert('Lo sentimos, no se encuentran localidades de interés cercanas!');
+            drupalgap_alert('No se encuentran localidades de interés cercanas!');
             return;
           }
 
