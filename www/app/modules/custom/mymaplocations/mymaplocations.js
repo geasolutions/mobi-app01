@@ -35,19 +35,19 @@ function mymaplocations_menu() {
     },
     value: 0,
     attributes: {
-      /*onclick: "mymf_radio_handler(this)"*/
-	  onclick: "mymaps_front_pageshow(this)"
+      onclick: "mymf_radio_handler(this)"
+	 /* onclick: "mymaps_front_pageshow(this)"*/
     }
   };
   return content;
 }
 //The Click Handler
 function mymf_radio_handler(radio) {
+  _mymap_buscar=$(radio).val();
   drupalgap_alert('Seleccionado: ' + $(radio).val());
-  drupalgap_alert('Aquí continuar para el tipo de busqueda seleccionado: ' + $(radio).val());
-}
+ }
 
-function mymaps_front_pageshow(radio) {
+function mymaps_front_pageshow(_mymap_buscar) {
   drupalgap_alert('mymaps_front_pageshow ha sido llamada! con opción:' + $(radio).val());
 } 
 	  
