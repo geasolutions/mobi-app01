@@ -35,13 +35,15 @@ function mymaplocations_menu() {
     },
     value: 0,
     attributes: {
-      /*onclick: "mymf_radio_handler(this)"*/
-	  onclick: "mymaps_front_pageshow(this)"
+      onclick: "mymf_radio_handler(this)";
+//	  onclick: "mymaps_front_pageshow(this)"
     }
   };
   return content;
 }
 }
+
+
 //The Click Handler
 function mymf_radio_handler(radio) {
   _mymap_buscar=$(radio).val();
@@ -51,27 +53,3 @@ function mymf_radio_handler(radio) {
 function mymaps_front_pageshow(_mymap_buscar) {
   drupalgap_alert('mymaps_front_pageshow ha sido llamada! con opción:' + $(radio).val());
 } 
-	  
-  /* content['locationBt'] = {
-   theme: 'button',
-   text: 'Lugares de interés',
-   attributes: {
-    onclick: "_my_module_map_button_click()",
-    'data-theme': 'b'
-   }
-  };
-  content['location_results'] = {
-  theme: 'jqm_item_list',
-  items: [],
-  attributes: {
-    id: 'location_results_list'
-   }
-   };
-    return content;
-   }
-  catch (error) { console.log('my_module_map - ' + error); }
- }*/
-
-
-
-
