@@ -117,7 +117,7 @@ drupalgap.settings.locale = {
 drupalgap.settings.title = 'DrupalGap';
  
 // App Front Page
-drupalgap.settings.front = 'mapsfront';
+drupalgap.settings.front = 'mfront';
 
 // Theme
 drupalgap.settings.theme = 'easystreet3';
@@ -162,7 +162,7 @@ Drupal.modules.contrib['addressfield'] = {};
 /** Custom Modules - www/app/modules/custom **/
 
 Drupal.modules.custom['my_module'] = {};
-Drupal.modules.custom['mymaplocations'] = {};
+Drupal.modules.custom['mymaplc'] = {};
 /***************************************|
  * Menus - http://drupalgap.org/node/85 |
  ***************************************/

@@ -11,23 +11,23 @@ var map_with_pos = {};
 var previous_pos_marker = {};
 
 
-function mymaplocations_menu() {
+function mymaplc_menu() {
   try {
     var items = {};
-    items['mapsfront'] = {
+    items['mfront'] = {
       title: 'Innova Spaces',
-      page_callback: 'mymaplocations_mapsfront',
-      pageshow: 'mymaplocations_mapsfront_pageshow'
+      page_callback: 'mymaplc_mfront'
+//      pageshow: 'mymaplc_mfront_pageshow'
     };
     return items;
   }
-  catch (error) { console.log('mymaplocations_menu - ' + error);}
+  catch (error) { console.log('mymaplc_menu - ' + error);}
    }
    
- function mymaplocations_mapsfront() {
+ function mymaplc_mfront() {
   try {    
    var content = {};
-    content['mymaplocations_mapsfront_radio_buttons'] = {
+    content['mymaplc_mfront_radio_buttons'] = {
     theme: 'radios',
     options: {
       0: 'Desde mi ubicación',
@@ -35,7 +35,7 @@ function mymaplocations_menu() {
     },
     value: 0,
     attributes: {
-      onclick: "mymaplocations_mapsfront_radio_handler(this)";
+      onclick: "mymaplc_mfront_radio_handler(this)";
 //	  onclick: "mymaps_front_pageshow(this)"
     }
   };
@@ -45,11 +45,11 @@ function mymaplocations_menu() {
 
 
 //The Click Handler
-function mymaplocations_mapsfront_radio_handler(radio) {
+function mymaplc_mfront_radio_handler(radio) {
   _mymap_buscar=$(radio).val();
   drupalgap_alert('Seleccionado: ' + $(radio).val());
  }
 
-function mymaplocations_mapsfront_pageshow(_mymap_buscar) {
+/*function mymaplocations_mapsfront_pageshow(_mymap_buscar) {
   drupalgap_alert('mymaplocations_mapsfront_pageshow ha sido llamada! con opción:' + $(radio).val());
-} 
+}*/
