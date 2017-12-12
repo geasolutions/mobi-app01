@@ -1,8 +1,7 @@
-// Create global variables to hold coordinates and the map.
 var _mymap_user_latitude = null;
 var _mymap_user_longitude = null;
 var _mymap_map = null;
-var _mymap_buscar=0;
+var _mymap_buscar = 0;
 var directions = {};
 var contactsWithAddress = [];
 var contactAddresses = [];
@@ -10,6 +9,7 @@ var compassWatchId = -1;
 var locationWatchId = -1;
 var map_with_pos = {};
 var previous_pos_marker = {};
+
 
 function mymaplocations_menu() {
   try {
@@ -21,9 +21,9 @@ function mymaplocations_menu() {
     };
     return items;
   }
-  catch (error) { console.log('mymaplocations_menu - ' + error); }
-  }
-
+  catch (error) { console.log('mymaplocations_menu - ' + error);}
+   }
+   
  function mymaps_front() {
   try {    
    var content = {};
@@ -35,11 +35,12 @@ function mymaplocations_menu() {
     },
     value: 0,
     attributes: {
-      onclick: "mymf_radio_handler(this)"
-	 /* onclick: "mymaps_front_pageshow(this)"*/
+      /*onclick: "mymf_radio_handler(this)"*/
+	  onclick: "mymaps_front_pageshow(this)"
     }
   };
   return content;
+}
 }
 //The Click Handler
 function mymf_radio_handler(radio) {
